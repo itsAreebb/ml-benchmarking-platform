@@ -1,67 +1,104 @@
-Hello everyone, this is Areeb Ali!
+# ML Benchmarking Platform
 
-After completing my machine learning learning journey, I decided to use my weekend to build something fun and meaningful. That’s how this project was born.
+An AutoML-style benchmarking system that trains, evaluates, ranks and visualizes classical machine learning models across many datasets, so you can see **which model works best, where, and why**.
 
-I created an AutoML Benchmarking System that compares and analyzes the performance of various classical machine learning models across multiple datasets. The idea was not just to train models, but to build a system that can experiment, evaluate, rank, and visualize how different algorithms behave in real scenarios.
+The focus is on system design and experimentation rather than on any single dataset: one command runs the full pipeline on every dataset in the registry, survives broken datasets without crashing, and produces per-dataset and global model rankings.
 
-The datasets used are mainly “toy” and standard datasets provided by the scikit-learn library (along with a few from OpenML), but the focus of the project is on system design and experimentation, not on the complexity of the data itself.
+## Features
 
-The core goal of this project is to:
+- **Automatic task detection**: works out whether each dataset is classification or regression from its target column.
+- **Automatic preprocessing**: mean imputation and scaling for numeric features, most-frequent imputation and one-hot encoding for categorical ones.
+- **Multi-model training**: trains up to 8 classifiers or 6 regressors per dataset and records the training time for each.
+- **Evaluation**: Accuracy, weighted F1 and ROC-AUC (binary) for classification; RMSE and R² for regression.
+- **Ranking**: ranks models within each dataset, then globally by number of wins.
+- **Fault tolerance**: datasets that fail to load or train are logged to `failed_datasets.csv` and skipped.
+- **Visualization**: model-wins bar chart and training-time vs performance scatter plot.
 
-1. Analyze model performance
-2. Compare training time vs accuracy
-3. Understand which models are more stable and powerful across different datasets
-4. Observe how model families behave (linear, probabilistic, tree-based, ensemble, boosting)
+## Models
 
-In simple terms, this project answers:
+| Classification | Regression |
+| --- | --- |
+| Logistic Regression | Linear Regression |
+| K-Nearest Neighbors | Decision Tree |
+| Gaussian Naive Bayes | Random Forest |
+| Decision Tree | Gradient Boosting |
+| Random Forest | AdaBoost |
+| Gradient Boosting | XGBoost |
+| AdaBoost | |
+| XGBoost | |
 
-“Which machine learning model works best, where, and why?”
+XGBoost is optional: if it isn't installed, those models are skipped.
 
-* Summary of Observations
+## Datasets
 
---> One clear pattern that emerged from the experiments is:
---> Ensemble learning methods consistently outperform simpler models.
+About 30 datasets are registered in `Datasets/dataset_registry.py`, a mix of classification and regression problems from:
 
-Boosting-based models such as:
+- **scikit-learn**: iris, wine, breast_cancer, diabetes, california_housing and more
+- **OpenML**: adult, titanic, bank-marketing, credit-g, mushroom, spambase, house_prices, energy_efficiency and more
 
-1. XGBoost
-2. Gradient Boosting
-3. AdaBoost 
-dominated the rankings across most datasets.
+Adding a dataset is as simple as adding one entry to the registry.
 
-They were followed by:
-4. Random Forests
-5. Probabilistic models (Naive Bayes)
-6. Linear and distance-based models
+## Results
 
-This strongly validates the idea that ensemble methods combine multiple weak learners to create powerful and stable predictors.
+In the latest run, 22 dataset runs completed and 8 were logged as failures. Number of datasets on which each model ranked #1:
 
-Objective of the Project:
+| Model | Wins |
+| --- | --- |
+| RandomForestClassifier | 5 |
+| XGBoostClassifier | 5 |
+| XGBoostRegressor | 4 |
+| RandomForestRegressor | 3 |
+| GradientBoostingClassifier | 1 |
+| GradientBoostingRegressor | 1 |
+| LogisticRegression | 1 |
+| NaiveBayes | 1 |
 
-The objective was not to build “the best model”, but to build a framework that can:
-Automatically detect problem type (classification / regression),Train multiple models
-Evaluate their performance,Rank them per dataset,Rank them globally,Visualize performance trends , Handle broken datasets without crashing.
+**Key takeaway:** ensemble methods (Random Forest, XGBoost, Gradient Boosting) won 19 of 21 dataset comparisons. Simpler models still won occasionally (Logistic Regression on breast_cancer, Naive Bayes on titanic), and they train far faster.
 
-This makes the project closer to a mini AutoML research platform rather than a single ML script.
+![Model wins across all datasets](Visuals/model_wins.png)
 
-Datasets:
+![Training time vs model performance](Visuals/speed_vs_performance.png)
 
-The datasets are a mixture of Classification and Regression problems.
+Full results are in the `Results/` folder.
 
-Mainly sourced from:
-1. scikit-learn.datasets
-2. OpenML
+## Project structure
 
-Models Used
+```
+ml-benchmarking-platform/
+├── main.py                  # Entry point: runs everything and saves rankings
+├── experiment_runner.py     # Loops over datasets: load → detect → split → train → evaluate
+├── requirements.txt
+├── Datasets/
+│   ├── dataset_registry.py  # List of datasets and where to load them from
+│   ├── loader.py            # Loads a dataset into pandas (X, y)
+│   └── detector.py          # Classification vs regression detection
+├── Pipeline/
+│   ├── preprocessing.py     # Train/test split and preprocessing pipeline
+│   ├── models.py            # Model definitions
+│   ├── trainer.py           # Trains every model and times it
+│   ├── evaluator.py         # Computes metrics
+│   └── ranking.py           # Per-dataset and global rankings
+├── Results/                 # CSV outputs from the latest run
+└── Visuals/                 # Plotting scripts and charts
+```
 
-Some of the main models included:
+## Getting started
 
---> XGBoostRegressor / XGBoostClassifier
---> GradientBoostingRegressor / GradientBoostingClassifier
---> AdaBoostRegressor / AdaBoostClassifier
---> Random Forest
---> Decision Trees
---> Logistic Regression / Linear Regression
---> KNN
---> Naive Bayes
+```bash
+git clone https://github.com/itsAreebb/ml-benchmarking-platform.git
+cd ml-benchmarking-platform
+pip install -r requirements.txt
+python main.py
+```
 
+The run downloads OpenML datasets on first use, so it needs an internet connection and can take a while. When it finishes it writes `results_all_datasets.csv`, `ranked_results_all_datasets.csv`, `global_model_ranking.csv` and `failed_datasets.csv`, and prints the top models.
+
+To regenerate the charts, move the CSVs into `Results/` and run:
+
+```bash
+python Visuals/visualize.py
+```
+
+## Tech stack
+
+Python · scikit-learn · XGBoost · pandas · NumPy · SciPy · Matplotlib · tqdm
