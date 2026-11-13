@@ -16,7 +16,7 @@ plt.xlabel("Model")
 plt.ylabel("Number of Wins")
 plt.xticks(rotation=45, ha="right")
 plt.tight_layout()
-plt.savefig("visualss/model_wins.png")   # <-- Save image
+plt.savefig("Visuals/model_wins.png")   # <-- Save image
 plt.close()
 
 
@@ -34,5 +34,5 @@ plt.title("Training Time vs Model Performance")
 plt.xlabel("Training Time (seconds)")
 plt.ylabel("Performance (Higher is Better)")
 plt.tight_layout()
-plt.savefig("visualss/speed_vs_performance.png")  # <-- Save image
+plt.savefig("Visuals/speed_vs_performance.png")  # <-- Save image
 plt.close()
