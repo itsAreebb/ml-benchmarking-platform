@@ -2,9 +2,14 @@ from Datasets.dataset_registry import get_all_datasets
 from experiment_runner import run_experiments
 from Pipeline.ranking import rank_models_per_dataset, global_model_ranking
 
+# -------- Settings --------
+TUNE = True     # set to False for a fast run with default hyperparameters
+N_ITER = 10     # hyperparameter settings tried per model
+CV_FOLDS = 3    # cross-validation folds used during tuning
+
 datasets = get_all_datasets()
 
-results_df, failed_df = run_experiments(datasets)
+results_df, failed_df = run_experiments(datasets, tune=TUNE, n_iter=N_ITER, cv=CV_FOLDS)
 
 # Save raw results
 if not results_df.empty:

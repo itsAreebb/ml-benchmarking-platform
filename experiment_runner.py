@@ -7,7 +7,7 @@ from Pipeline.evaluator import evaluate_models
 from tqdm import tqdm
 
 
-def run_experiments(Datasets):
+def run_experiments(Datasets, tune=True, n_iter=10, cv=3):
     '''this is the final func that will take all 50 dataset and apply all the required ML
     pipeline and the results are evaluated sequentially in a Pandas DataFrame!
     and this concludes our ML project'''
@@ -37,7 +37,8 @@ def run_experiments(Datasets):
 
             #Initialize the training
 
-            trained_models = train_models(X_train , y_train , problem_type)
+            trained_models = train_models(X_train , y_train , problem_type,
+                                          tune=tune , n_iter=n_iter , cv=cv)
 
             #Evaluate
             results = evaluate_models(trained_models , X_test , y_test , problem_type)
