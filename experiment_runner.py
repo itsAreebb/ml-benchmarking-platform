@@ -1,5 +1,5 @@
 import pandas as pd
-from Datasets.loader import load_dataset_from_registry
+from Datasets.loader import load_dataset_from_registry, normalize_labels
 from Datasets.detector import detect_problem_type
 from Pipeline.preprocessing import split_data
 from Pipeline.trainer import train_models
@@ -25,6 +25,11 @@ def run_experiments(Datasets):
 
             #detect task to perform
             problem_type = detect_problem_type(y)
+
+            # Encode labels to 0..K-1 for classification only
+            # (regression targets must keep their real numeric values)
+            if problem_type == 'classification':
+                y = normalize_labels(y)
 
             #split
 
