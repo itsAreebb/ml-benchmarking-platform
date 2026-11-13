@@ -23,10 +23,6 @@ def load_dataset_from_registry(dataset_config):
         data = loader(as_frame = True)
         X = data.data
         y = data.target
-       
-      # Always normalize classification labels
-        y = normalize_labels(y)
-
 
         return X , y
     
@@ -39,9 +35,6 @@ def load_dataset_from_registry(dataset_config):
         data = loader(name = name , as_frame = True)
         X = data.data
         y  = data.target
-
-        # Always normalize classification labels
-        y = normalize_labels(y)
 
         return X, y
     
