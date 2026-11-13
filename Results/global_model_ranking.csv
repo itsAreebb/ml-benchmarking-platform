@@ -1,0 +1,9 @@
+model,wins
+RandomForestClassifier,5
+XGBoostClassifier,5
+XGBoostRegressor,4
+RandomForestRegressor,3
+GradientBoostingClassifier,1
+GradientBoostingRegressor,1
+LogisticRegression,1
+NaiveBayes,1

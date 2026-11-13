@@ -1,0 +1,9 @@
+dataset,error
+linnerud,"y should be a 1d array, got an array of shape (20, 3) instead."
+heart-disease,"y should be a 1d array, got an array of shape () instead."
+phishing,No active dataset phishing found.
+concrete,No active dataset concrete found.
+bike-sharing-demand,No active dataset bike-sharing-demand found.
+automobile,No active dataset automobile found.
+student_performance,No active dataset student_performance found.
+real_estate,No active dataset real_estate found.
