@@ -21,7 +21,9 @@ def evaluate_models(trained_models, X_test, y_test, problem_type):
 
         metrics = {
             "model": name,
-            "train_time": train_time
+            "train_time": train_time,
+            "tuned": info.get("tuned", False),
+            "best_params": str(info.get("best_params")) if info.get("best_params") else None,
         }
 
         # ---------------- Regression Metrics ----------------
